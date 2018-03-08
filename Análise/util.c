@@ -17,20 +17,27 @@ void printToken( TokenType token, const char* tokenString )
   { case IF:
     case THEN:
     case ELSE:
-    case END:
-    case REPEAT:
-    case UNTIL:
-    case READ:
-    case WRITE:
+    case INT:
+    case VOID:
+    case RETURN:
+    case WHILE:
       fprintf(listing,
          "reserved word: %s\n",tokenString);
       break;
-    case ASSIGN: fprintf(listing,":=\n"); break;
+    case ASSIGN: fprintf(listing,"=\n"); break;
     case LT: fprintf(listing,"<\n"); break;
-    case EQ: fprintf(listing,"=\n"); break;
+    case LTEQ: fprintf(listing,"<=\n"); break;
+    case GT: fprintf(listing,">\n"); break;
+    case GTEQ: fprintf(listing,">=\n"); break;
+    case EQ: fprintf(listing,"==\n"); break;
     case LPAREN: fprintf(listing,"(\n"); break;
     case RPAREN: fprintf(listing,")\n"); break;
+    case LBRACKET: fprintf(listing,"[\n"); break;
+    case RBRACKET: fprintf(listing,"]\n"); break;
+    case LBRACE: fprintf(listing,"{\n"); break;
+    case RBRACE: fprintf(listing,"}\n"); break;
     case SEMI: fprintf(listing,";\n"); break;
+    case COMMA: fprintf(listing,",\n"); break;
     case PLUS: fprintf(listing,"+\n"); break;
     case MINUS: fprintf(listing,"-\n"); break;
     case TIMES: fprintf(listing,"*\n"); break;
@@ -134,17 +141,14 @@ void printTree( TreeNode * tree )
         case IfK:
           fprintf(listing,"If\n");
           break;
-        case RepeatK:
-          fprintf(listing,"Repeat\n");
+        case ElseK:
+          fprintf(listing,"Else\n");
           break;
-        case AssignK:
-          fprintf(listing,"Assign to: %s\n",tree->attr.name);
+        case WhileK:
+          fprintf(listing,"While\n");
           break;
-        case ReadK:
-          fprintf(listing,"Read: %s\n",tree->attr.name);
-          break;
-        case WriteK:
-          fprintf(listing,"Write\n");
+        case ReturnK:
+          fprintf(listing,"Return\n");
           break;
         default:
           fprintf(listing,"Unknown ExpNode kind\n");
@@ -162,6 +166,32 @@ void printTree( TreeNode * tree )
           break;
         case IdK:
           fprintf(listing,"Id: %s\n",tree->attr.name);
+          break;
+		case AtribK:
+          fprintf(listing,"Atrib: ");
+		  		printToken(tree->attr.op,"\0");
+          break;
+    case RelK:
+          fprintf(listing,"Rel: ");
+		  		printToken(tree->attr.op,"\0");
+          break;
+		case VectorK:
+          fprintf(listing,"Vector: %s\n",tree->attr.name);
+          break;
+		case FunctionK:
+          fprintf(listing,"Function: %s\n",tree->attr.name);
+          break;
+		 case LiteralK:
+          fprintf(listing,"Literal: %i\n",tree->attr.val);
+          break;
+		case CallK:
+          fprintf(listing,"Call: %s\n",tree->attr.name);
+          break;
+		case TypeK:
+		  		if(tree->type == Void)
+						fprintf(listing,"Type: Void\n");
+		  		if(tree->type == Int)
+						fprintf(listing,"Type: Int\n");
           break;
         default:
           fprintf(listing,"Unknown ExpNode kind\n");

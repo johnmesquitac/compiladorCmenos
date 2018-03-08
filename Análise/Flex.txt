@@ -1,0 +1,5 @@
+﻿cd "/mnt/c/Users/denis/Google Drive/Unifesp/1 - Matérias/7° Semestre/Lab. Compiladores/compiladorCmenos/Análise"
+flex tarefa.l
+gcc -o pudim lex.yy.c -lfl
+ls
+./pudim texto.txt

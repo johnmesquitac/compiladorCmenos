@@ -87,15 +87,24 @@ static void insertNode( TreeNode * t)
  * table by preorder traversal of the syntax tree
  */
 void buildSymtab(TreeNode * syntaxTree)
-{ traverse(syntaxTree,insertNode,nullProc);
+{ 
+  traverse(syntaxTree,insertNode,nullProc);
+  
+  if(st_lookup("main", "global") == -1)
+  {
+      printf("main was not declared");
+      Error = TRUE;
+  }
   if (TraceAnalyze)
-  { fprintf(listing,"\nSymbol table:\n\n");
+  { 
+    fprintf(listing,"\nSymbol table:\n\n");
     printSymTab(listing);
   }
 }
 
 static void typeError(TreeNode * t, char * message)
-{ fprintf(listing,"Type error at line %d: %s\n",t->lineno,message);
+{ 
+  fprintf(listing,"Type error in %s at line %d: %s\n",t->attr.name, t->lineno,message);
   Error = TRUE;
 }
 
@@ -156,5 +165,6 @@ static void checkNode(TreeNode * t)
  * by a postorder syntax tree traversal
  */
 void typeCheck(TreeNode * syntaxTree)
-{ traverse(syntaxTree,nullProc,checkNode);
+{ 
+  traverse(syntaxTree,nullProc,checkNode);
 }

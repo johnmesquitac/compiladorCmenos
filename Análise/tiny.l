@@ -2,8 +2,6 @@
 /* File: tiny.l                                     */
 /* Lex specification for TINY                       */
 /* Compiler Construction: Principles and Practice   */
-/* Kenneth C. Louden                                */
-/****************************************************/
 
 %{
 #include "globals.h"
@@ -18,39 +16,50 @@ digit       [0-9]
 number      {digit}+
 letter      [a-zA-Z]
 identifier  {letter}+
-newline     \n
+newline     [\n]
 whitespace  [ \t\r]+
 
 %%
 
 "if"            {return IF;}
-"then"          {return THEN;}
-"else"          {return ELSE;}
-"end"           {return END;}
-"repeat"        {return REPEAT;}
-"until"         {return UNTIL;}
-"read"          {return READ;}
-"write"         {return WRITE;}
-":="            {return ASSIGN;}
-"="             {return EQ;}
+"else"          {return ELSE;}/**/
+"int"           {return INT;}/**/
+"return"        {return RETURN;}/**/
+"void"         	{return VOID;}/**/
+"while"         {return WHILE;}/**/
+"="            	{return ASSIGN;}
+"!="            {return NEQ;}/**/
+"=="            {return EQ;}
 "<"             {return LT;}
+"<="            {return LTEQ;}/**/
+">"             {return GT;}/**/
+">="            {return GTEQ;}/**/
 "+"             {return PLUS;}
 "-"             {return MINUS;}
 "*"             {return TIMES;}
 "/"             {return OVER;}
+";"             {return SEMI;}
+","             {return COMMA;}/**/
 "("             {return LPAREN;}
 ")"             {return RPAREN;}
-";"             {return SEMI;}
+"["             {return LBRACKET;}/**/
+"]"             {return RBRACKET;}/**/
+"{"             {return LBRACE;}/**/
+"}"             {return RBRACE;}/**/
+
 {number}        {return NUM;}
 {identifier}    {return ID;}
 {newline}       {lineno++;}
 {whitespace}    {/* skip whitespace */}
-"{"             { char c;
+
+"/*"             { char c = ' '; char anterior; 
                   do
-                  { c = input();
-                    if (c == EOF) break;
-                    if (c == '\n') lineno++;
-                  } while (c != '}');
+                  { 
+			anterior = c;
+			c = input();
+                    	if (c == EOF) return ERROR;
+			if (c == '\n') lineno++;
+                  } while (c != '/' || anterior != '*');
                 }
 .               {return ERROR;}
 
