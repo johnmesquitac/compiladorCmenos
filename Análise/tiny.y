@@ -53,12 +53,15 @@ decl 					: var-decl {$$ = $1;}
 var-decl 				: tipo-especificador id SEMI {
 							$$ = $1;
 							$$->child[0] = $2;
+							$$->child[0]->kind.exp = VariableK;
+							$$->child[0]->type = $$->type;
 						}
 						| tipo-especificador id LBRACKET num RBRACKET SEMI {
 							$$ = $1;
 							$$->child[0] = $2;
 							$$->child[0]->kind.exp = VectorK;
 							$$->child[0]->child[0] = $4;
+							$$->child[0]->type = $$->type;
 						}
 						;
 
@@ -76,6 +79,7 @@ fun-decl 				: tipo-especificador id LPAREN params RPAREN composto-decl {
 							$$ = $1;
 							$$->child[0] = $2;
 							$$->child[0]->kind.exp = FunctionK;
+							$$->child[0]->type = $$->type;
 							$$->child[0]->child[0] = $4;
 							$$->child[0]->child[1] = $6;
 						}
@@ -106,11 +110,14 @@ param-lista 			: param-lista COMMA param {
 param 					: tipo-especificador id {
 							$$ = $1;
 							$$->child[0] = $2;
+							$$->child[0]->kind.exp = VariableK;
+							$$->child[0]->type = $$->type;
 						}
 						| tipo-especificador id LBRACKET RBRACKET {
 							$$ = $1;
 							$$->child[0] = $2;
 							$$->child[0]->kind.exp = VectorK;
+							$$->child[0]->type = $$->type;
 						}
 						;
 
@@ -216,7 +223,7 @@ var 					: id {
 						| id LBRACKET expressao RBRACKET {
 							$$ = $1;
 							$$->child[0] = $3;
-							$$->kind.exp = VectorK;
+							$$->kind.exp = IdVectorK;
 						}
 						;
 
@@ -336,21 +343,25 @@ num						: NUM {
 %%
 
 int yyerror(char * message)
-{ fprintf(listing,"Syntax error at line %d: %s\n",lineno,message);
-  fprintf(listing,"Current token: ");
-  printToken(yychar,tokenString);
-  Error = TRUE;
-  return 0;
+{ 
+	fprintf(listing,"Syntax error at line %d: %s\n",lineno,message);
+  	fprintf(listing,"Current token: ");
+  	printToken(yychar,tokenString);
+  	Error = TRUE;
+  	return 0;
 }
 
 /* yylex calls getToken to make Yacc/Bison output
  * compatible with ealier versions of the TINY scanner
  */
 static int yylex(void)
-{ return getToken(); }
+{ 
+	return getToken(); 
+}
 
 TreeNode * parse(void)
-{ yyparse();
-  return savedTree;
+{ 
+	yyparse();
+  	return savedTree;
 }
 

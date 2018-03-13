@@ -12,6 +12,7 @@
  * table by preorder traversal of the syntax tree
  */
 void buildSymtab(TreeNode *);
+static void typeError(TreeNode *t, char *message);
 
 /* Procedure typeCheck performs type checking 
  * by a postorder syntax tree traversal

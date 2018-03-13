@@ -3,3 +3,5 @@ flex tarefa.l
 gcc -o pudim lex.yy.c -lfl
 ls
 ./pudim texto.txt
+
+./tiny Testes/teste01.c

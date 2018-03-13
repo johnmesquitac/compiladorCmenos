@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "symtab.h"
-#include "global.h"
+#include "globals.h"
 
 /* SIZE is the size of the hash table */
 #define SIZE 211
@@ -22,28 +22,31 @@
 #define SHIFT 4
 
 /* the hash function */
-static int hash ( char * name, char * scope )
-{ int temp = 0;
-  int i = 0;
-  while (name[i] != '\0')
-  { temp = ((temp << SHIFT) + key[i]) % SIZE;
-    ++i;
-  }
-  i = 0;
-  while (scope[i] != '\0')
-  { temp = ((temp << SHIFT) + key[i]) % SIZE;
-    ++i;
-  }
-  return temp;
+static int hash (char* name, char* scope)
+{ 
+    int temp = 0;
+    int i = 0;
+    while (name[i] != '\0')
+    { 
+        temp = ((temp << SHIFT) + name[i]) % SIZE;
+        ++i;
+    }
+    i = 0;
+    while (scope[i] != '\0')
+    { 
+        temp = ((temp << SHIFT) + scope[i]) % SIZE;
+        ++i;
+    }
+    return temp;
 }
 
 /* the list of line numbers of the source 
  * code in which a variable is referenced
  */
-typedef struct LineListRec
-   { int lineno;
-     struct LineListRec * next;
-   } * LineList;
+typedef struct LineListRec {
+    int lineno;
+    struct LineListRec *next;
+} *LineList;
 
 /* The record in the bucket lists for
  * each variable, including name, 
@@ -51,15 +54,15 @@ typedef struct LineListRec
  * the list of line numbers in which
  * it appears in the source code
  */
-typedef struct BucketListRec
-   { char * name;
-     char * scope;
-     char* typeId;
-     char* typeData;
-     LineList lines;
-     int memloc ; /* memory location for variable */
-     struct BucketListRec * next;
-   } * BucketList;
+typedef struct BucketListRec {
+    char *name;
+    char *scope;
+    char *typeId;
+    char *typeData;
+    LineList lines;
+    int memloc; /* memory location for variable */
+    struct BucketListRec *next;
+} *BucketList;
 
 /* the hash table */
 static BucketList hashTable[SIZE];
@@ -69,55 +72,56 @@ static BucketList hashTable[SIZE];
  * loc = memory location is inserted only the
  * first time, otherwise ignored
  */
-void st_insert( char * name, int lineno, int loc, char* scope, char* typeId, char* typeData)
-{ int h = hash(name, scope);
-  BucketList l =  hashTable[h];
-  while ((l != NULL) && (strcmp(name,l->name) != 0) && (strcmp(scope,l->scope) != 0))
-    l = l->next;
-  if (l == NULL) /* variable not yet in table */
-  { l = (BucketList) malloc(sizeof(struct BucketListRec));
-    l->name = name;
-    l->lines = (LineList) malloc(sizeof(struct LineListRec));
-    l->lines->lineno = lineno;
-    l->memloc = loc;
-    l->lines->next = NULL;
-    l->scope = scope;
-    l->typeId = typeId;
-    l->typeData = typeData;
-    l->next = hashTable[h];
-    hashTable[h] = l; 
-  }
-  else /* found in table, so just add line number */
-  { LineList t = l->lines;
-    while (t->next != NULL) t = t->next;
-    t->next = (LineList) malloc(sizeof(struct LineListRec));
-    t->next->lineno = lineno;
-    t->next->next = NULL;
-  }
+void st_insert(char *name, int lineno, int loc, char *scope, char *typeId, char *typeData) {
+    int h = hash(name, scope);
+    BucketList l = hashTable[h];
+    while ((l != NULL) && (strcmp(name, l->name) != 0) && (strcmp(scope, l->scope) != 0))
+        l = l->next;
+    if (l == NULL) /* variable not yet in table */
+    {
+        l = (BucketList) malloc(sizeof(struct BucketListRec));
+        l->name = name;
+        l->lines = (LineList) malloc(sizeof(struct LineListRec));
+        l->lines->lineno = lineno;
+        l->memloc = loc;
+        l->lines->next = NULL;
+        l->scope = scope;
+        l->typeId = typeId;
+        l->typeData = typeData;
+        l->next = hashTable[h];
+        hashTable[h] = l;
+    } else /* found in table, so just add line number */
+    {
+        LineList t = l->lines;
+        while (t->next != NULL) t = t->next;
+        t->next = (LineList) malloc(sizeof(struct LineListRec));
+        t->next->lineno = lineno;
+        t->next->next = NULL;
+    }
 } /* st_insert */
+
 
 /* Function st_lookup returns the memory 
  * location of a variable or -1 if not found
  */
-int st_lookup ( char * name,  char * scope)
-{ int h = hash(name);
-  BucketList l =  hashTable[h];
-  while ((l != NULL) && (strcmp(name,l->name) != 0) && (strcmp(scope,l->scope) != 0))
-    l = l->next;
-  if (l == NULL) return -1;
-  else return l->memloc;
+int st_lookup(char *name, char *scope) {
+    int h = hash(name, scope);  
+    BucketList l = hashTable[h];
+    while ((l != NULL) && (strcmp(name, l->name) != 0) && (strcmp(scope, l->scope) != 0))
+        l = l->next;
+    if (l == NULL) return -1;
+    else return l->memloc;
 }
 
-char* st_lookup_type (char* name, char* scope)
-{ 
-  int h = hash(name, scope);  
-  BucketList l =  hashTable[h];
-  while ((l != NULL) && (strcmp(name,l->name) != 0) && (strcmp(scope,l->scope) != 0))
+char *st_lookup_type(char *name, char *scope) {
+    int h = hash(name, scope);
+    BucketList l = hashTable[h];
+    while ((l != NULL) && (strcmp(name, l->name) != 0) && (strcmp(scope, l->scope) != 0))
         l = l->next;
-  if (l == NULL) 
-      return "null";
-  else 
-      return l->typeData;
+    if (l == NULL)
+        return "null";
+    else
+        return l->typeData;
 }
 
 
@@ -125,27 +129,27 @@ char* st_lookup_type (char* name, char* scope)
  * listing of the symbol table contents 
  * to the listing file
  */
-void printSymTab(FILE * listing)
-{ int i;
-  fprintf(listing,"Location  Variable Name  Escopo  Tipo ID  Tipo Dado  Line Numbers\n");
-  fprintf(listing,"--------  -------------  ------  -------  ---------  ------------\n");
-  for (i=0;i<SIZE;++i)
-  { if (hashTable[i] != NULL)
-    { BucketList l = hashTable[i];
-      while (l != NULL)
-      { LineList t = l->lines;
-        fprintf(listing,"%-8d ",l->memloc);
-        fprintf(listing,"%-14s ",l->name);
-        fprintf(listing,"%-9d  ",l->scope);
-        fprintf(listing,"%-12d  ",l->typeId);
-        fprintf(listing,"%-12d  ",l->typeData);
-        while (t != NULL)
-        { fprintf(listing,"%4d ",t->lineno);
-          t = t->next;
+void printSymTab(FILE *listing) {
+    int i;
+    fprintf(listing, "Location  Variable Name  Escopo    Tipo ID    Tipo Dado  Line Numbers\n");
+    fprintf(listing, "--------  -------------  ------  -----------  ---------  ------------\n");
+    for (i = 0; i < SIZE; ++i) {
+        if (hashTable[i] != NULL) {
+            BucketList l = hashTable[i];
+            while (l != NULL) {
+                LineList t = l->lines;
+                fprintf(listing, "%-9d ", l->memloc);
+                fprintf(listing, "%-14s ", l->name);
+                fprintf(listing, "%-6s  ", l->scope);
+                fprintf(listing, "%-9s  ", l->typeId);
+                fprintf(listing, "%-10s  ", l->typeData);
+                while (t != NULL) {
+                    fprintf(listing, "%4d ", t->lineno);
+                    t = t->next;
+                }
+                fprintf(listing, "\n");
+                l = l->next;
+            }
         }
-        fprintf(listing,"\n");
-        l = l->next;
-      }
     }
-  }
 } /* printSymTab */
