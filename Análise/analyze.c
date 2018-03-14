@@ -82,7 +82,7 @@ static void insertNode(TreeNode *t) {
                     break;
 
                 case VariableK:
-                    fprintf(listing, "VariableK Nome: %s   Escopo : %s  R1: %d  R2: %d  R3: %d\n\n ", t->attr.name, scopeCurrent, st_lookup(t->attr.name, scopeCurrent), st_lookup(t->attr.name, "global"), st_lookup(t->attr.name, ""));
+                    //fprintf(listing, "VariableK Nome: %s   Escopo : %s  R1: %d  R2: %d  R3: %d\n\n ", t->attr.name, scopeCurrent, st_lookup(t->attr.name, scopeCurrent), st_lookup(t->attr.name, "global"), st_lookup(t->attr.name, ""));
                     if (st_lookup(t->attr.name, scopeCurrent) == -1 && st_lookup(t->attr.name, "global") == -1 && st_lookup(t->attr.name, "") == -1) {
                         if (t->type == Int){
                             t->scope = scopeCurrent;
@@ -188,6 +188,7 @@ static void checkNode(TreeNode *t) {
             switch (t->kind.exp) {
                 case RelK:
                     //fprintf(listing, "RelK:  %s    Tipo1: %s   Tipo2: %s\n\n",t->attr.name, t->child[0]->typeData, t->child[1]->typeData);
+                    if()
                     if(strcmp(t->child[0]->typeData, "void") == 0 || strcmp(t->child[1]->typeData, "void") ==  0)
                         typeError(t, "Invalid expression.");
                 break;

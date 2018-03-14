@@ -1,4 +1,4 @@
-/* gdc com erro semantico - nome de vari�vel duplicado com fun��o */
+/* gdc com erro semantico - verifica��o de tipos */
 
 /* teste de fun��o com par�metros e corpo sem declara��es */
 int gdc (int u, int v)
@@ -14,25 +14,32 @@ int input(void)
 }
 
 /* teste de fun��o com par�metro e sem corpo */
-void denis(int x)
+void output(int x)
 {
+	return x;
 }
 
 /* teste de fun��o sem par�metro e com corpo completo */
-void main(void) 
+void casa(void)
 {
 
    /* teste de diferentes tipos de vari�veis, incluindo vetor */
-   int input; /* erro semantico - nome duplicado com de fun��o */
    int x;
    int y;
    int u;
+   int u;
+   void a;
    int v[10];
+   int output;
+
+   u = output(x); /* erro sem�ntico: valor de retorno de fun��o � void */
 
    /* chamadas de fun��es */
    x = input();
    y = input();
-   denis(gdc(x,y));
+   output(gdc(x,y));
+   
+   denis();
 
    /* teste atribui��o e repeti��o */
    u = 0;
@@ -45,6 +52,6 @@ void main(void)
    }
 
    /* teste return simples */   
-   return x;
+   return;
 
 }

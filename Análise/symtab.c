@@ -15,7 +15,7 @@
 #include "globals.h"
 
 /* SIZE is the size of the hash table */
-#define SIZE 211
+#define SIZE 400
 
 /* SHIFT is the power of two used as multiplier
    in hash function  */
