@@ -14,7 +14,7 @@ int input(void)
 }
 
 /* teste de fun��o com par�metro e sem corpo */
-void output(int x)
+void denis(int x)
 {
 }
 
@@ -32,7 +32,7 @@ void main(void)
    /* chamadas de fun��es */
    x = input();
    y = input();
-   output(gdc(x,y));
+   denis(gdc(x,y));
 
    /* teste atribui��o e repeti��o */
    u = 0;

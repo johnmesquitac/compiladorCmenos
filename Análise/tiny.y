@@ -181,11 +181,13 @@ expressao-decl 			: expressao SEMI {$$ = $1;}
 
 selecao-decl 			: IF LPAREN expressao RPAREN statement {
 							$$ = newStmtNode(IfK);
+							$$->attr.name = "IF";
 							$$->child[0] = $3;
 							$$->child[1] = $5;
 						}
 						| IF LPAREN expressao RPAREN statement ELSE statement {
 							$$ = newStmtNode(IfK);
+							$$->attr.name = "IF";
 							$$->child[0] = $3;
 							$$->child[1] = $5;
 							$$->child[2] = $7;
@@ -201,9 +203,11 @@ iteracao-decl 			: WHILE LPAREN expressao RPAREN statement {
 
 retorno-decl 			: RETURN SEMI {
 							$$ = newStmtNode(ReturnK);
+							$$->attr.val = 1;
 						}
 						| RETURN expressao SEMI {
 							$$ = newStmtNode(ReturnK);
+							$$->attr.val = 2;
 							$$->child[0] = $2;
 						}
 						;
@@ -212,7 +216,7 @@ expressao 				: var ASSIGN expressao {
 							$$ = newExpNode(AtribK);
 							$$->child[0] = $1;
 							$$->child[1] = $3;
-							$$->attr.op = ASSIGN;
+							$$->attr.name = "ASSIGN";
 						}
 						| simples-expressao {$$ = $1;}
 						;
@@ -237,27 +241,27 @@ simples-expressao 		: soma-expressao relacional soma-expressao {
 
 relacional 				: LTEQ { 
 							$$ = newExpNode(RelK);
-							$$->attr.op = LTEQ;
+							$$->attr.name = "LTEQ";
 						}
 						| LT { 
 							$$ = newExpNode(RelK);
-							$$->attr.op = LT;
+							$$->attr.name = "LT";
 						}
 						| GT { 
 							$$ = newExpNode(RelK);
-							$$->attr.op = GT;
+							$$->attr.name = "GT";
 						}
 						| GTEQ { 
 							$$ = newExpNode(RelK);
-							$$->attr.op = GTEQ;
+							$$->attr.name = "GTEQ";
 						}
 						| EQ { 
 							$$ = newExpNode(RelK);
-							$$->attr.op = EQ;
+							$$->attr.name = "EQ";
 						}
 						| NEQ { 
 							$$ = newExpNode(RelK);
-							$$->attr.op = NEQ;
+							$$->attr.name = "NEQ";
 						}
 						;
 
@@ -271,11 +275,11 @@ soma-expressao 			: soma-expressao soma termo {
 
 soma 					: PLUS { 
 							$$ = newExpNode(OpK);
-							$$->attr.op = PLUS;
+							$$->attr.name = "PLUS";
 						}
 						| MINUS { 
 							$$ = newExpNode(OpK);
-							$$->attr.op = MINUS;
+							$$->attr.name = "MINUS";
 						}
 						;
 
@@ -289,11 +293,11 @@ termo 					: termo mult fator {
 
 mult 					: TIMES { 
 							$$ = newExpNode(OpK);
-							$$->attr.op = TIMES;
+							$$->attr.name = "TIMES";
 						}
 						| OVER { 
 							$$ = newExpNode(OpK);
-							$$->attr.op = OVER;
+							$$->attr.name = "OVER";
 						}
 						;
 

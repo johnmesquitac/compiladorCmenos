@@ -61,7 +61,7 @@ static void insertNode(TreeNode *t) {
                     break;
 
                 case ReturnK:
-
+                    t->scope = scopeCurrent;
                     break;
 
                 default:
@@ -71,7 +71,7 @@ static void insertNode(TreeNode *t) {
         case ExpK:
             switch (t->kind.exp) {
                 case FunctionK:
-                    if (st_lookup(t->attr.name, scopeCurrent) == -1 && st_lookup(t->attr.name, "global") == -1) {
+                    if (st_lookup(t->attr.name, scopeCurrent) == -1 && st_lookup(t->attr.name, "global") == -1 && st_lookup(t->attr.name, "") == -1) {
                         scopeCurrent = t->attr.name;
                         if (t->type == Int)
                             st_insert(t->attr.name, t->lineno, location++, "", "function", "integer");
@@ -82,7 +82,8 @@ static void insertNode(TreeNode *t) {
                     break;
 
                 case VariableK:
-                    if (st_lookup(t->attr.name, scopeCurrent) == -1 && st_lookup(t->attr.name, "global") == -1) {
+                    fprintf(listing, "VariableK Nome: %s   Escopo : %s  R1: %d  R2: %d  R3: %d\n\n ", t->attr.name, scopeCurrent, st_lookup(t->attr.name, scopeCurrent), st_lookup(t->attr.name, "global"), st_lookup(t->attr.name, ""));
+                    if (st_lookup(t->attr.name, scopeCurrent) == -1 && st_lookup(t->attr.name, "global") == -1 && st_lookup(t->attr.name, "") == -1) {
                         if (t->type == Int){
                             t->scope = scopeCurrent;
                             st_insert(t->attr.name, t->lineno, location++, t->scope, "variable", "integer");
@@ -98,6 +99,7 @@ static void insertNode(TreeNode *t) {
                         typeError(t, "It was not declared");
                     else {
                         t->scope = scopeCurrent;
+                        t->typeData = st_lookup_type(t->attr.name, t->scope);
                         st_insert(t->attr.name, t->lineno, 0, t->scope, "variable", "integer");
                     }
                     break;
@@ -107,6 +109,7 @@ static void insertNode(TreeNode *t) {
                         typeError(t, "It was not declared");
                     else {
                         t->scope = scopeCurrent;
+                        t->typeData = st_lookup_type(t->attr.name, t->scope);
                         st_insert(t->attr.name, t->lineno, 0, t->scope, "variable", "integer");
                     }
                     break;
@@ -115,12 +118,14 @@ static void insertNode(TreeNode *t) {
                     t->scope = scopeCurrent;
                     if (st_lookup(t->attr.name, "") == -1 && st_lookup(t->attr.name, "global") == -1)
                         typeError(t, "Invalid Call. It was not declared.");
-                    else
+                    else{
+                        t->typeData = st_lookup_type(t->attr.name, "");
                         st_insert(t->attr.name, t->lineno, location++, t->scope, "call", "-");
-                      break;
+                    }
+                    break;
 
                 case VectorK:
-                    if (st_lookup(t->attr.name, scopeCurrent) == -1 && st_lookup(t->attr.name, "global") == -1) {
+                    if (st_lookup(t->attr.name, scopeCurrent) == -1 && st_lookup(t->attr.name, "global") == -1 && st_lookup(t->attr.name, "") == -1) {
                         if (t->type == Int){
                             t->scope = scopeCurrent;
                             st_insert(t->attr.name, t->lineno, location++, t->scope, "vector", "integer");
@@ -131,16 +136,17 @@ static void insertNode(TreeNode *t) {
                         typeError(t, "Invalid Declaration. Already declared.");
                     break;
 
-                case TypeK:
 
+                case LiteralK:
+                    t->typeData = "integer";
                     break;
 
-                case AtribK:
-                    //t->child[0]->typeData = st_lookup_type(t->child[0]->attr.name, t->child[0]->scope);
-                    //t->child[1]->typeData = st_lookup_type(t->child[1]->attr.name, t->child[1]->scope);
-                    //if (t->child[0]->typeData != t->child[1]->typeData)
-                      //  typeError(t, "Invalid expression.");
-                    //fprintf(listing, "Denis   %d     %d   \n\n", t->child[0]->type, t->child[1]->type);
+                case OpK:
+                    t->typeData = "integer";
+                    break;
+
+                case RelK:
+                    t->typeData = "integer";
                     break;
 
                 default:
@@ -181,6 +187,10 @@ static void checkNode(TreeNode *t) {
         case ExpK:
             switch (t->kind.exp) {
                 case RelK:
+                    //fprintf(listing, "RelK:  %s    Tipo1: %s   Tipo2: %s\n\n",t->attr.name, t->child[0]->typeData, t->child[1]->typeData);
+                    if(strcmp(t->child[0]->typeData, "void") == 0 || strcmp(t->child[1]->typeData, "void") ==  0)
+                        typeError(t, "Invalid expression.");
+                break;
                 case VectorK:
                 case FunctionK:
                 case LiteralK:
@@ -188,17 +198,39 @@ static void checkNode(TreeNode *t) {
                     break;
 
                 case IdK:
-                    t->type = Int;
+
                     break;
 
                 case TypeK:
+
                     break;
 
                 case AtribK:
+
+                    if(t->child[0]->kind.exp == CallK){
+                        t->child[0]->typeData = st_lookup_type(t->child[0]->attr.name, "");
+                    }
+                    else if (t->child[0]->kind.exp == LiteralK || t->child[0]->kind.exp == IdK || t->child[0]->kind.exp == IdVectorK || t->child[1]->kind.exp == OpK || t->child[1]->kind.exp == RelK || t->child[1]->kind.exp == AtribK)
+                        t->child[0]->typeData = "integer";
+                    else{
+                        typeError(t, "Invalid Attribution.");
+                        break;
+                    }
+
+                    if(t->child[1]->kind.exp == CallK){
+                        t->child[1]->typeData = st_lookup_type(t->child[1]->attr.name,  "");
+                    }
+                    else if (t->child[1]->kind.exp == LiteralK  || t->child[1]->kind.exp == IdK || t->child[1]->kind.exp == IdVectorK || t->child[1]->kind.exp == OpK || t->child[1]->kind.exp == RelK || t->child[1]->kind.exp == AtribK)
+                        t->child[1]->typeData = "integer";
+                    else{
+                        typeError(t, "Invalid Attribution.");
+                        break;
+                    }
+                    if (strcmp(t->child[0]->typeData, "void") == 0 || strcmp(t->child[1]->typeData, "void") == 0){
+                        typeError(t, "Invalid expression.");
+                    }
                     break;
 
-                case CallK:
-                    break;
 
                 default:
                     break;
@@ -208,10 +240,22 @@ static void checkNode(TreeNode *t) {
         case StmtK:
             switch (t->kind.stmt) {
                 case IfK:
-                    if (t->child[0]->type == Int && t->child[1]->type == Int)
-                        typeError(t->child[0], "if test is not Boolean");
                     break;
 
+                case ReturnK:
+                    if(t->attr.val == 2){
+                      //fprintf(listing, "Return Nome: %s   Tipo : %s\n\n",  t->child[0]->attr.name, t->child[0]->typeData);
+                      t->typeData = t->child[0]->typeData;
+                    }
+                    else
+                      t->typeData = "void";
+
+                    //fprintf(listing, "Tipo retorno:  %s    Escopo: %s   Tipo : %s\n\n",t->typeData, t->scope, st_lookup_type(t->scope,  ""));
+                    if(strcmp(t->typeData, st_lookup_type(t->scope,  "")) != 0){
+                        fprintf(listing, "Type error in Return at line %d: Return Invalid.\n", t->lineno);
+                        Error = TRUE;
+                    }
+                    break;
                 default:
                     break;
             }
