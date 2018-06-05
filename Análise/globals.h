@@ -27,7 +27,7 @@
 #ifndef YYPARSER
 
 /* the name of the following file may change */
-#include "tiny.tab.h"
+#include "cminus.tab.h"
 
 /* ENDFILE is implicitly defined by Yacc/Bison,
  * and not included in the tab.h file
@@ -69,7 +69,7 @@ typedef enum {AtribK,OpK,RelK,IdK, VectorK, FunctionK, LiteralK, CallK, TypeK, C
 /* ExpType is used for type checking */
 typedef enum {Void,Int} ExpType;
 
-#define MAXCHILDREN 3
+#define MAXCHILDREN 20
 
 typedef struct treeNode
    { struct treeNode * child[MAXCHILDREN];
@@ -77,6 +77,7 @@ typedef struct treeNode
      int lineno;
      char *typeId, *typeData, *scope;
      NodeKind nodekind;
+     TokenType op;
      union { StmtKind stmt; ExpKind exp;} kind;
      union { TokenType op;
              int val;

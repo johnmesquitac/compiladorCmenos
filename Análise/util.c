@@ -156,10 +156,11 @@ void printTree( TreeNode * tree )
       }
     }
     else if (tree->nodekind==ExpK)
-    { switch (tree->kind.exp) {
+    { 
+      switch (tree->kind.exp) {
         case OpK:
           fprintf(listing,"Op: ");
-          printToken(tree->attr.op,"\0");
+          printToken(tree->op,"\0");
           break;
         case ConstK:
           fprintf(listing,"Const: %d\n",tree->attr.val);
@@ -167,35 +168,41 @@ void printTree( TreeNode * tree )
         case IdK:
           fprintf(listing,"Id: %s\n",tree->attr.name);
           break;
-		case AtribK:
-          fprintf(listing,"Atrib: ");
-		  		printToken(tree->attr.op,"\0");
+        case VariableK:
+          fprintf(listing,"Variable: %s\n",tree->attr.name);
           break;
-    case RelK:
-          fprintf(listing,"Rel: ");
-		  		printToken(tree->attr.op,"\0");
-          break;
-		case VectorK:
-          fprintf(listing,"Vector: %s\n",tree->attr.name);
-          break;
-		case FunctionK:
-          fprintf(listing,"Function: %s\n",tree->attr.name);
-          break;
-		 case LiteralK:
-          fprintf(listing,"Literal: %i\n",tree->attr.val);
-          break;
-		case CallK:
-          fprintf(listing,"Call: %s\n",tree->attr.name);
-          break;
-		case TypeK:
-		  		if(tree->type == Void)
-						fprintf(listing,"Type: Void\n");
-		  		if(tree->type == Int)
-						fprintf(listing,"Type: Int\n");
-          break;
+    		case AtribK:
+              fprintf(listing,"Atrib: ");
+    		  		printToken(tree->op,"\0");
+              break;
+        case RelK:
+              fprintf(listing,"Rel: ");
+    		  		printToken(tree->op,"\0");
+              break;
+    		case VectorK:
+              fprintf(listing,"Vector: %s\n",tree->attr.name);
+              break;
+        case IdVectorK:
+              fprintf(listing,"IdVector: %s\n",tree->attr.name);
+              break;
+    		case FunctionK:
+              fprintf(listing,"Function: %s\n",tree->attr.name);
+              break;
+    		 case LiteralK:
+              fprintf(listing,"Literal: %i\n",tree->attr.val);
+              break;
+    		case CallK:
+              fprintf(listing,"Call: %s\n",tree->attr.name);
+              break;
+    		case TypeK:
+    		  		if(tree->type == Void)
+    						fprintf(listing,"Type: Void\n");
+    		  		if(tree->type == Int)
+    						fprintf(listing,"Type: Int\n");
+              break;
         default:
-          fprintf(listing,"Unknown ExpNode kind\n");
-          break;
+              fprintf(listing,"Unknown ExpNode kind\n");
+              break;
       }
     }
     else fprintf(listing,"Unknown node kind\n");

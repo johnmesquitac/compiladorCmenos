@@ -15,7 +15,7 @@
 /* set NO_CODE to TRUE to get a compiler that does not
  * generate code
  */
-#define NO_CODE TRUE
+#define NO_CODE FALSE
 
 #include "util.h"
 #if NO_PARSE
@@ -39,7 +39,7 @@ FILE * code;
 /* allocate and set tracing flags */
 int EchoSource = FALSE;
 int TraceScan = FALSE;
-int TraceParse = FALSE;
+int TraceParse = TRUE;
 int TraceAnalyze = TRUE;
 int TraceCode = FALSE;
 
@@ -80,7 +80,8 @@ int main( int argc, char * argv[] )
   }
 #if !NO_CODE
   if (! Error)
-  { char * codefile;
+  { 
+    char * codefile;
     int fnlen = strcspn(pgm,".");
     codefile = (char *) calloc(fnlen+4, sizeof(char));
     strncpy(codefile,pgm,fnlen);

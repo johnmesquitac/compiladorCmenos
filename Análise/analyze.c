@@ -71,12 +71,13 @@ static void insertNode(TreeNode *t) {
         case ExpK:
             switch (t->kind.exp) {
                 case FunctionK:
+                location = 0;
                     if (st_lookup(t->attr.name, scopeCurrent) == -1 && st_lookup(t->attr.name, "global") == -1 && st_lookup(t->attr.name, "") == -1) {
                         scopeCurrent = t->attr.name;
                         if (t->type == Int)
-                            st_insert(t->attr.name, t->lineno, location++, "", "function", "integer");
+                            st_insert(t->attr.name, t->lineno, location++, "", "function", "integer", 0);
                         else
-                            st_insert(t->attr.name, t->lineno, location++, "", "function", "void");
+                            st_insert(t->attr.name, t->lineno, location++, "", "function", "void", 0);
                     } else
                         typeError(t, "Invalid Declaration. Already declared.");
                     break;
@@ -86,7 +87,7 @@ static void insertNode(TreeNode *t) {
                     if (st_lookup(t->attr.name, scopeCurrent) == -1 && st_lookup(t->attr.name, "global") == -1 && st_lookup(t->attr.name, "") == -1) {
                         if (t->type == Int){
                             t->scope = scopeCurrent;
-                            st_insert(t->attr.name, t->lineno, location++, t->scope, "variable", "integer");
+                            st_insert(t->attr.name, t->lineno, location++, t->scope, "variable", "integer", 1);
                           }
                         else
                             typeError(t, "Invalid Declaration. It can't type VOID.");
@@ -100,7 +101,7 @@ static void insertNode(TreeNode *t) {
                     else {
                         t->scope = scopeCurrent;
                         t->typeData = st_lookup_type(t->attr.name, t->scope);
-                        st_insert(t->attr.name, t->lineno, 0, t->scope, "variable", "integer");
+                        st_insert(t->attr.name, t->lineno, 0, t->scope, "variable", "integer", 0);
                     }
                     break;
 
@@ -110,17 +111,21 @@ static void insertNode(TreeNode *t) {
                     else {
                         t->scope = scopeCurrent;
                         t->typeData = st_lookup_type(t->attr.name, t->scope);
-                        st_insert(t->attr.name, t->lineno, 0, t->scope, "variable", "integer");
+                        st_insert(t->attr.name, t->lineno, 0, t->scope, "variable", "integer", 0);
                     }
                     break;
 
                 case CallK:
                     t->scope = scopeCurrent;
-                    if (st_lookup(t->attr.name, "") == -1 && st_lookup(t->attr.name, "global") == -1)
+                    if(strcmp(t->attr.name, "output")==0 || strcmp(t->attr.name, "input")==0){
+                        st_insert(t->attr.name, t->lineno, location++, t->scope, "call", "-", 0);
+                    }
+                    else if (st_lookup(t->attr.name, "") == -1 && st_lookup(t->attr.name, "global") == -1){
                         typeError(t, "Invalid Call. It was not declared.");
+                    }
                     else{
                         t->typeData = st_lookup_type(t->attr.name, "");
-                        st_insert(t->attr.name, t->lineno, location++, t->scope, "call", "-");
+                        st_insert(t->attr.name, t->lineno, location++, t->scope, "call", "-", 0);
                     }
                     break;
 
@@ -128,7 +133,8 @@ static void insertNode(TreeNode *t) {
                     if (st_lookup(t->attr.name, scopeCurrent) == -1 && st_lookup(t->attr.name, "global") == -1 && st_lookup(t->attr.name, "") == -1) {
                         if (t->type == Int){
                             t->scope = scopeCurrent;
-                            st_insert(t->attr.name, t->lineno, location++, t->scope, "vector", "integer");
+                            st_insert(t->attr.name, t->lineno, location, t->scope, "vector", "integer", t->child[0]->attr.val);
+                            location +=t->child[0]->attr.val;
                           }
                         else
                             typeError(t, "Invalid Declaration. It can't type VOID.");
@@ -188,7 +194,6 @@ static void checkNode(TreeNode *t) {
             switch (t->kind.exp) {
                 case RelK:
                     //fprintf(listing, "RelK:  %s    Tipo1: %s   Tipo2: %s\n\n",t->attr.name, t->child[0]->typeData, t->child[1]->typeData);
-                    if()
                     if(strcmp(t->child[0]->typeData, "void") == 0 || strcmp(t->child[1]->typeData, "void") ==  0)
                         typeError(t, "Invalid expression.");
                 break;

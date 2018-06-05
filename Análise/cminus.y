@@ -217,6 +217,7 @@ expressao 				: var ASSIGN expressao {
 							$$->child[0] = $1;
 							$$->child[1] = $3;
 							$$->attr.name = "ASSIGN";
+							$$->op = ASSIGN;
 						}
 						| simples-expressao {$$ = $1;}
 						;
@@ -242,26 +243,32 @@ simples-expressao 		: soma-expressao relacional soma-expressao {
 relacional 				: LTEQ { 
 							$$ = newExpNode(RelK);
 							$$->attr.name = "LTEQ";
+							$$->op = LTEQ;
 						}
 						| LT { 
 							$$ = newExpNode(RelK);
+							$$->op = LT;
 							$$->attr.name = "LT";
 						}
 						| GT { 
 							$$ = newExpNode(RelK);
 							$$->attr.name = "GT";
+							$$->op = GT;
 						}
 						| GTEQ { 
 							$$ = newExpNode(RelK);
 							$$->attr.name = "GTEQ";
+							$$->op = GTEQ;
 						}
 						| EQ { 
 							$$ = newExpNode(RelK);
 							$$->attr.name = "EQ";
+							$$->op = EQ;
 						}
 						| NEQ { 
 							$$ = newExpNode(RelK);
 							$$->attr.name = "NEQ";
+							$$->op = NEQ;
 						}
 						;
 
@@ -276,10 +283,12 @@ soma-expressao 			: soma-expressao soma termo {
 soma 					: PLUS { 
 							$$ = newExpNode(OpK);
 							$$->attr.name = "PLUS";
+							$$->op = PLUS;
 						}
 						| MINUS { 
 							$$ = newExpNode(OpK);
 							$$->attr.name = "MINUS";
+							$$->op = MINUS;
 						}
 						;
 
@@ -294,10 +303,12 @@ termo 					: termo mult fator {
 mult 					: TIMES { 
 							$$ = newExpNode(OpK);
 							$$->attr.name = "TIMES";
+							$$->op = TIMES;
 						}
 						| OVER { 
 							$$ = newExpNode(OpK);
 							$$->attr.name = "OVER";
+							$$->op = OVER;
 						}
 						;
 
