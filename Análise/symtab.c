@@ -76,7 +76,7 @@ static BucketList hashTable[SIZE];
 void st_insert(char *name, int lineno, int loc, char *scope, char *typeId, char *typeData, int tam) {
     int h = hash(name, scope);
     BucketList l = hashTable[h];
-    while ((l != NULL) && (strcmp(name, l->name) != 0) && (strcmp(scope, l->scope) != 0))
+    while ((l != NULL) && ((strcmp(name, l->name) != 0) || (strcmp(scope, l->scope) != 0)))
         l = l->next;
     if (l == NULL) /* variable not yet in table */
     {
@@ -109,8 +109,12 @@ void st_insert(char *name, int lineno, int loc, char *scope, char *typeId, char 
 int st_lookup(char *name, char *scope) {
     int h = hash(name, scope);  
     BucketList l = hashTable[h];
-    while ((l != NULL) && (strcmp(name, l->name) != 0) && (strcmp(scope, l->scope) != 0))
+    //printf("%s \t %s\n", name, scope);
+    while ((l != NULL) && ((strcmp(name, l->name) != 0) || (strcmp(scope, l->scope) != 0))){
+        //printf("Entrou %s\n", l->name);
         l = l->next;
+    }
+    //if(l != NULL) printf("Existe %s \t %s \t %d\n", l->name, l->scope, strcmp(name, l->name));
     if (l == NULL) return -1;
     else return l->memloc;
 }
@@ -118,7 +122,7 @@ int st_lookup(char *name, char *scope) {
 char *st_lookup_type(char *name, char *scope) {
     int h = hash(name, scope);
     BucketList l = hashTable[h];
-    while ((l != NULL) && (strcmp(name, l->name) != 0) && (strcmp(scope, l->scope) != 0))
+    while ((l != NULL) && ((strcmp(name, l->name) != 0) || (strcmp(scope, l->scope) != 0)))
         l = l->next;
     if (l == NULL)
         return "null";

@@ -1,5 +1,8 @@
-int Else(int b){
-  return b+2;
+int Else(int b, int c, int d){
+  int casa;
+  int denis;
+
+  return b+2+casa;
 }
 
 void main(void)
@@ -10,17 +13,5 @@ void main(void)
    y = 1;
    u = 0;
 
-   if(x<0){
-      u = 1;
-   }
-
-   while(u<10){
-    u = u + 2;
-   }
-
-   x = input();
-
-   output(0, x);
-
-   y = Else(3) + u;
+   y = Else(3, 4, 5) + u;
 }

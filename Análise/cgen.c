@@ -8,13 +8,15 @@
    It is decremented each time a temp is
    stored, and incremeted when loaded again
 */
-static int tmpOffset = 0;
+static int tmpOffset = 0; //Ponteiro da Pilha "mp" que começa na posição 99 da memória e decresce até o 0
 
 int baseEscopo = 30; //Registrador que controla o endereço inicial da função na memória
 int tamEscopo = 0;
 int nif = 0;
 int nwhile = 0;
 char teste[50];
+
+int call = 0;
 
 /* prototype for internal recursive code generator */
 static void cGen (TreeNode * tree);
@@ -96,21 +98,9 @@ static void genStmt( TreeNode * tree)
           p1 = tree->child[0] ;
           cGen(p1);
           emitRM("STORE",ac,0,baseEscopo,"Salva valor do retorno na memória");
-          emitI1("JR",31,"Volta para onde foi chamado");
+          //emitI1("JR",31,"Volta para onde foi chamado");
           if (TraceCode) emitComment("<- return") ;
           break;
-//      case ReadK:
-//         emitRO("IN",ac,0,0,"read integer value");
-//         loc = st_lookup(tree->attr.name);
-//         emitRM("ST",ac,loc,gp,"read: store value");
-//         break;
-
-//      case WriteK:
-         /* generate code for expression to write */
-//         cGen(tree->child[0]);
-//         /* now output it */
-//         emitRO("OUT",ac,0,0,"write ac");
-//         break;
       default:
          break;
     }
@@ -183,36 +173,35 @@ static void genExp( TreeNode * tree)
         break;
 
     case CallK:
+        call = 1;
         if (TraceCode) emitComment("-> Call") ;
         if(strcmp(tree->attr.name, "output")!=0 && strcmp(tree->attr.name, "input")!=0){
             emitI3("ADDI", baseEscopo, baseEscopo, tamEscopo, "mudança de base de memória");
             emitRM("STORE",31,tmpOffset--,mp,"ra é armazenado na memória");
-            while(tree->child[i] != NULL){
-                cGen(tree->child[i]);
-                emitRM("STORE",ac,i++,baseEscopo,"Passagem de parametro");
+            TreeNode * aux;
+            aux = tree->child[0];
+            while(aux != NULL){
+                cGen(aux);
+                emitRM("STORE",ac,++i,baseEscopo,"Passagem de parametro");
+                aux = aux->sibling;
             }
             emitJL("JAL", tree->attr.name, "");
             emitRM("LOAD",31,++tmpOffset,mp,"ra recebe o PC antigo");
+            emitRM("LOAD",ac, 0, baseEscopo, "Colocando o retorno no registrador ac (redundante)");
             emitI3("SUBI", baseEscopo, baseEscopo, tamEscopo, "voltando a base antiga de memória");
         }
         else if(strcmp(tree->attr.name, "output")==0){
-            p1 = tree->child[0];
-            p2 = tree->child[0]->sibling;
+            p1 = tree->child[0]->sibling;
             /* gen code for ac = left arg */
-            cGen(p1);
-            /* gen code to push left operand */
-            emitRM("STORE",ac,tmpOffset--,mp,"op: push left");
-            /* gen code for ac = right operand */
             cGen(p2);
-            /* now load left operand */
-            emitRM("LOAD",ac1,++tmpOffset,mp,"op: load left");
 
-            emitI2("OUT",ac,ac1,"Mostra o valor do Registrador ac na saída ac1");
+            emitI2("OUT",tree->child[0]->attr.val,ac,"Mostra o valor do Registrador ac na saída p1");
         }
         else if(strcmp(tree->attr.name, "input")==0){
             emitI1("IN",ac,"Salva o valor de entrada no registrador ac");
         }
         if (TraceCode) emitComment("<- Call") ;
+        call = 0;
         break;
 
     case OpK :
@@ -326,7 +315,8 @@ static void cGen( TreeNode * tree)
         //printf("default\n");
         break;
     }
-    cGen(tree->sibling);
+
+    if(call != 1) cGen(tree->sibling);
   }
 }
 
