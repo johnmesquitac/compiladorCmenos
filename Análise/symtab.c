@@ -130,6 +130,18 @@ char *st_lookup_type(char *name, char *scope) {
         return l->typeData;
 }
 
+char *st_lookup_typeId(char *name, char *scope) {
+    int h = hash(name, scope);
+    BucketList l = hashTable[h];
+    while ((l != NULL) && ((strcmp(name, l->name) != 0) || (strcmp(scope, l->scope) != 0)))
+        l = l->next;
+    if (l == NULL)
+        return "null";
+    else
+        return l->typeId;
+}
+
+
 int st_lookup_tam(char *scope){
      int i,j=1;
      for (i = 0; i < SIZE; ++i) {
@@ -164,7 +176,7 @@ void printSymTab(FILE *listing) {
                 fprintf(listing, "%-14s ", l->name);
                 fprintf(listing, "%-6s  ", l->scope);
                 fprintf(listing, "%-11s  ", l->typeId);
-                fprintf(listing, "%-10s  ", l->typeData);
+                fprintf(listing, "%-7s  ", l->typeData);
                 while (t != NULL) {
                     fprintf(listing, "%4d ", t->lineno);
                     t = t->next;

@@ -82,9 +82,8 @@ static void insertNode(TreeNode *t) {
                         typeError(t, "Invalid Declaration. Already declared.");
                     break;
 
-                case VariableK:
-                    //fprintf(listing, "VariableK Nome: %s   Escopo : %s  R1: %d  R2: %d  R3: %d\n\n ", t->attr.name, scopeCurrent, st_lookup(t->attr.name, scopeCurrent), st_lookup(t->attr.name, "global"), st_lookup(t->attr.name, ""));
-                    if (st_lookup(t->attr.name, scopeCurrent) == -1 && st_lookup(t->attr.name, "global") == -1 && st_lookup(t->attr.name, "") == -1) {
+                case VariableK:     //Declaração de Variavel
+                   if (st_lookup(t->attr.name, scopeCurrent) == -1 && st_lookup(t->attr.name, "global") == -1 && st_lookup(t->attr.name, "") == -1) {
                         if (t->type == Int){
                             t->scope = scopeCurrent;
                             st_insert(t->attr.name, t->lineno, location++, t->scope, "variable", "integer", 1);
@@ -95,27 +94,32 @@ static void insertNode(TreeNode *t) {
                         typeError(t, "Invalid Declaration. Already declared.");
                     break;
 
-                case IdK:
+                case IdK:           //Chamada de variavel
                     if (st_lookup(t->attr.name, scopeCurrent) == -1 && st_lookup(t->attr.name, "global") == -1)
                         typeError(t, "It was not declared");
                     else {
+
+                        if((strcmp(st_lookup_typeId(t->attr.name, scopeCurrent), "vector") == 0) || (strcmp(st_lookup_typeId(t->attr.name, ""), "vector") == 0)){
+                            t->kind.exp = ParamVectorK;
+                        }
                         t->scope = scopeCurrent;
                         t->typeData = st_lookup_type(t->attr.name, t->scope);
                         st_insert(t->attr.name, t->lineno, 0, t->scope, "variable", "integer", 0);
                     }
                     break;
 
-                case IdVectorK:
+                case IdVectorK:     //Chamada de Vetor
                     if (st_lookup(t->attr.name, scopeCurrent) == -1 && st_lookup(t->attr.name, "global") == -1)
                         typeError(t, "It was not declared");
                     else {
                         t->scope = scopeCurrent;
                         t->typeData = st_lookup_type(t->attr.name, t->scope);
-                        st_insert(t->attr.name, t->lineno, 0, t->scope, "variable", "integer", 0);
+                        if(strcmp(t->typeData, "pointer")==0) t->kind.exp = PointerK;
+                        st_insert(t->attr.name, t->lineno, 0, t->scope, "vector", "integer", 0);
                     }
                     break;
 
-                case CallK:
+                case CallK:         
                     t->scope = scopeCurrent;
                     if(strcmp(t->attr.name, "output")==0 || strcmp(t->attr.name, "input")==0){
                         st_insert(t->attr.name, t->lineno, location++, t->scope, "call", "-", 0);
@@ -129,12 +133,18 @@ static void insertNode(TreeNode *t) {
                     }
                     break;
 
-                case VectorK:
+                case VectorK:       //Declaração de Vetor
                     if (st_lookup(t->attr.name, scopeCurrent) == -1 && st_lookup(t->attr.name, "global") == -1 && st_lookup(t->attr.name, "") == -1) {
                         if (t->type == Int){
                             t->scope = scopeCurrent;
-                            st_insert(t->attr.name, t->lineno, location, t->scope, "vector", "integer", t->child[0]->attr.val);
-                            location +=t->child[0]->attr.val;
+                            if(t->child[0] != NULL){
+                                st_insert(t->attr.name, t->lineno, location, t->scope, "vector", "integer", t->child[0]->attr.val);
+                                location +=t->child[0]->attr.val;
+                            } 
+                            else{
+                                st_insert(t->attr.name, t->lineno, location, t->scope, "vector", "pointer", 1);
+                                location += 1;
+                            }
                           }
                         else
                             typeError(t, "Invalid Declaration. It can't type VOID.");

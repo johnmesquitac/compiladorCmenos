@@ -9,7 +9,7 @@ int nlabel[100];
 int x =0;
 
 
-void decBin(int n, int t){
+void decBin(int n, int t){		//n - numero  e t - qnt de digitos
 	int c, k;
 	for (c = t-1; c >= 0; c--){
 		k = n >> c;
@@ -33,30 +33,36 @@ void converte(char *inst, char *op){
 	
 	printf("bancoInst[%d] = 32'b",x);
 
-	if(strcmp(inst, "LABEL")==0){
+	if(strcmp(inst, "LABEL")==0){		//NOP
 		decBin(0, 32);
 	}
-	else if(strcmp(inst, "J")==0){
+	else if(strcmp(inst, "J")==0){		//Tipo J
 		printf("010100_");
 		decBin(atoi(op1), 26);
 	}
-	else if(strcmp(inst, "JR")==0){
+	else if(strcmp(inst, "JR")==0){		//Tipo R
 		printf("010011_");
 		decBin(atoi(op1), 5);
 		printf("_");
-		decBin(0, 21);
+		decBin(0, 5);
+		printf("_");
+		decBin(0, 5);
+		printf("_");
+		decBin(0, 11);
 	}
-	else if(strcmp(inst, "JAL")==0){
+	else if(strcmp(inst, "JAL")==0){	//Tipo I
 		printf("010101_");
 		decBin(atoi(op1), 26);
 	}
-	else if(strcmp(inst, "LOADI")==0){
-		printf("011011_00000_");
+	else if(strcmp(inst, "LOADI")==0){	//Tipo I
+		printf("011011_");
+		decBin(0, 5);
+		printf("_");
 		decBin(atoi(op1), 5);
 		printf("_");
 		decBin(atoi(op2), 16);
 	}
-	else if(strcmp(inst, "ADD")==0){
+	else if(strcmp(inst, "ADD")==0){	//Tipo R
 		printf("000001_");
 		decBin(atoi(op2), 5);
 		printf("_");
@@ -66,12 +72,134 @@ void converte(char *inst, char *op){
 		printf("_");
 		decBin(0, 11);
 	}
+	else if(strcmp(inst, "SUB")==0){	//Tipo R
+		printf("000011_");
+		decBin(atoi(op2), 5);
+		printf("_");
+		decBin(atoi(op3), 5);
+		printf("_");
+		decBin(atoi(op1), 5);
+		printf("_");
+		decBin(0, 11);
+	}
+	else if(strcmp(inst, "MULT")==0){	//Tipo R
+		printf("000101_");
+		decBin(atoi(op2), 5);
+		printf("_");
+		decBin(atoi(op3), 5);
+		printf("_");
+		decBin(atoi(op1), 5);
+		printf("_");
+		decBin(0, 11);
+	}
+	else if(strcmp(inst, "DIV")==0){	//Tipo R
+		printf("000110_");
+		decBin(atoi(op2), 5);
+		printf("_");
+		decBin(atoi(op3), 5);
+		printf("_");
+		decBin(atoi(op1), 5);
+		printf("_");
+		decBin(0, 11);
+	}
+	else if(strcmp(inst, "ADDI")==0){ 	//Tipo I
+		printf("000010_");
+		decBin(atoi(op2), 5);	
+		printf("_");
+		decBin(atoi(op1), 5);		//Reg destino
+		printf("_");
+		decBin(atoi(op3), 16);
+	}
+	else if(strcmp(inst, "SUBI")==0){ 	//Tipo I
+		printf("000100_");
+		decBin(atoi(op2), 5);	
+		printf("_");
+		decBin(atoi(op1), 5);		//Reg destino
+		printf("_");
+		decBin(atoi(op3), 16);
+	}
+	else if(strcmp(inst, "SGT")==0){	//Tipo R
+		printf("010111_");
+		decBin(atoi(op2), 5);
+		printf("_");
+		decBin(atoi(op3), 5);
+		printf("_");
+		decBin(atoi(op1), 5);
+		printf("_");
+		decBin(0, 11);
+	}
+	else if(strcmp(inst, "SLT")==0){	//Tipo R
+		printf("010110_");
+		decBin(atoi(op2), 5);
+		printf("_");
+		decBin(atoi(op3), 5);
+		printf("_");
+		decBin(atoi(op1), 5);
+		printf("_");
+		decBin(0, 11);
+	}
+	else if(strcmp(inst, "SET")==0){	//Tipo R
+		printf("011000_");
+		decBin(atoi(op2), 5);
+		printf("_");
+		decBin(atoi(op3), 5);
+		printf("_");
+		decBin(atoi(op1), 5);
+		printf("_");
+		decBin(0, 11);
+	}
+	else if(strcmp(inst, "BEQ")==0){	//Tipo I
+		printf("010000_");
+		decBin(atoi(op1), 5);
+		printf("_");
+		decBin(atoi(op2), 5);
+		printf("_");
+		decBin(atoi(op3), 16);
+	}
+	else if(strcmp(inst, "BNE")==0){	//Tipo I
+		printf("010001_");
+		decBin(atoi(op1), 5);
+		printf("_");
+		decBin(atoi(op2), 5);
+		printf("_");
+		decBin(atoi(op3), 16);
+	}
+	else if(strcmp(inst, "OUT")==0){	//Tipo I
+		printf("100000_");
+		decBin(0, 5);
+		printf("_");
+		decBin(atoi(op2), 5);
+		printf("_");
+		decBin(atoi(op1), 16);
+	}
+	else if(strcmp(inst, "IN")==0){		//Tipo I
+		printf("011111_");
+		decBin(0, 5);
+		printf("_");
+		decBin(atoi(op1), 5);
+		printf("_");
+		decBin(0, 16);
+	}
+	else if(strcmp(inst, "LOAD")==0){		//Tipo I
+		printf("011001_");
+		decBin(atoi(op3), 5);
+		printf("_");
+		decBin(atoi(op1), 5);
+		printf("_");
+		decBin(atoi(op2), 16);
+	}
+	else if(strcmp(inst, "STORE")==0){		//Tipo I
+		printf("011010_");
+		decBin(atoi(op3), 5);
+		printf("_");
+		decBin(atoi(op1), 5);
+		printf("_");
+		decBin(atoi(op2), 16);
+	}
 	else if(strcmp(inst, "HALT")==0){
 		printf("111111_");
 		decBin(0, 26);
 	}
-
-
 	printf(";");
 	x++;
 }
@@ -145,7 +273,7 @@ int main(int argv, char **argc){
 
 		strcpy(op2, op);
 		converte(inst, op);
-		printf("    \t//%s  %s\n",inst, op2);
+		printf("\t\t//%s\t%s\n",inst, op2);
 	}
 
 	i = 0;

@@ -1,4 +1,4 @@
-all: tokenizer parser build
+all: tokenizer parser build bin cod
 
 tokenizer:
 	flex cminus.l
@@ -15,3 +15,10 @@ clean:
 	rm -f lex.yy.c
 	rm -f *.o
 	rm -f cminus.tab.*
+
+bin:
+	gcc Testes/binario.c -o binario
+
+cod:
+	./cminus Testes/teste02.c
+	./binario Testes/teste02.tm > Testes/codigo02.txt

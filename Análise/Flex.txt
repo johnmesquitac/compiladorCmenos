@@ -2,6 +2,8 @@
 flex tarefa.l
 gcc -o pudim lex.yy.c -lfl
 ls
-./pudim texto.txt
+
+gcc /Testes/binario.c -o binario
 
 ./cminus Testes/teste01.c
+./binario Testes/teste01.tm

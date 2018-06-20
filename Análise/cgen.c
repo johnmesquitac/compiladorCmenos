@@ -9,6 +9,7 @@
    stored, and incremeted when loaded again
 */
 static int tmpOffset = 0; //Ponteiro da Pilha "mp" que começa na posição 99 da memória e decresce até o 0
+int pilha = 29;            //Registrador que controla a posição inicial na memória da pilha - possui valor 99
 
 int baseEscopo = 30; //Registrador que controla o endereço inicial da função na memória
 int tamEscopo = 0;
@@ -139,13 +140,28 @@ static void genExp( TreeNode * tree)
         if (TraceCode)  emitComment("<- Id") ;
         break; /* IdK */
     
-    case IdVectorK :
+    case IdVectorK:
         if (TraceCode) emitComment("-> IdVector") ;
         loc = st_lookup(tree->attr.name, tree->scope);
         emitRM("LOAD",ac,loc+tree->child[0]->attr.val,baseEscopo,"load id value");
         if (TraceCode)  emitComment("<- IdVector") ;
         break; /* IdVectorK */
 
+    case ParamVectorK:
+        if (TraceCode) emitComment("-> ParamVector") ;
+        /* gen code to load integer constant using LDC */
+        loc = st_lookup(tree->attr.name, tree->scope);
+        emitI3("ADDI", ac, baseEscopo, loc, "Salvando o endereço do vetor no ac");
+        //if (TraceCode)  emitComment("<- ParamVector") ;
+        break; /* ParamVectorK */
+
+    case PointerK:
+        if (TraceCode) emitComment("-> Pointer") ;
+        loc = st_lookup(tree->attr.name, tree->scope);
+        emitRM("LOAD",3,loc,baseEscopo,"load id value");
+        emitRM("LOAD",ac,tree->child[0]->attr.val,3,"load id value");
+        if (TraceCode)  emitComment("<- Pointer") ;
+        break;
     case VectorK:
         //Não faz nada
         break;
@@ -176,24 +192,28 @@ static void genExp( TreeNode * tree)
         call = 1;
         if (TraceCode) emitComment("-> Call") ;
         if(strcmp(tree->attr.name, "output")!=0 && strcmp(tree->attr.name, "input")!=0){
-            emitI3("ADDI", baseEscopo, baseEscopo, tamEscopo, "mudança de base de memória");
-            emitRM("STORE",31,tmpOffset--,mp,"ra é armazenado na memória");
+            emitRM("STORE",31,0,pilha,"ra é armazenado na memória");
+            emitI3("SUBI", pilha, pilha, 1, "mudança de base de memória");
             TreeNode * aux;
             aux = tree->child[0];
             while(aux != NULL){
                 cGen(aux);
+                emitI3("ADDI", baseEscopo, baseEscopo, tamEscopo, "mudança de base de memória");
                 emitRM("STORE",ac,++i,baseEscopo,"Passagem de parametro");
+                emitI3("SUBI", baseEscopo, baseEscopo, tamEscopo, "voltando a base antiga de memória");
                 aux = aux->sibling;
             }
+            emitI3("ADDI", baseEscopo, baseEscopo, tamEscopo, "mudança de base de memória");
             emitJL("JAL", tree->attr.name, "");
-            emitRM("LOAD",31,++tmpOffset,mp,"ra recebe o PC antigo");
+            emitI3("ADDI", pilha, pilha, 1, "mudança de base de memória");
+            emitRM("LOAD",31,0,pilha,"ra recebe o PC antigo");
             emitRM("LOAD",ac, 0, baseEscopo, "Colocando o retorno no registrador ac (redundante)");
             emitI3("SUBI", baseEscopo, baseEscopo, tamEscopo, "voltando a base antiga de memória");
         }
         else if(strcmp(tree->attr.name, "output")==0){
             p1 = tree->child[0]->sibling;
             /* gen code for ac = left arg */
-            cGen(p2);
+            cGen(p1);
 
             emitI2("OUT",tree->child[0]->attr.val,ac,"Mostra o valor do Registrador ac na saída p1");
         }
@@ -211,11 +231,14 @@ static void genExp( TreeNode * tree)
          /* gen code for ac = left arg */
          cGen(p1);
          /* gen code to push left operand */
-         emitRM("STORE",ac,tmpOffset--,mp,"op: push left");
+         //emitRM("STORE",ac,tmpOffset--,pilha,"op: push left");
+         emitRM("STORE",ac,0,pilha,"op: push left");
+         emitI3("SUBI", pilha, pilha, 1, "Deslocamento pilha");
          /* gen code for ac = right operand */
          cGen(p2);
          /* now load left operand */
-         emitRM("LOAD",ac1,++tmpOffset,mp,"op: load left");
+         emitI3("ADDI", pilha, pilha, 1, "Deslocamento pilha");
+         emitRM("LOAD",ac1,0,pilha,"op: load left");
 
          switch (tree->op) {
             case PLUS :
@@ -244,11 +267,13 @@ static void genExp( TreeNode * tree)
          /* gen code for ac = left arg */
          cGen(p1);
          /* gen code to push left operand */
-         emitRM("STORE",ac,tmpOffset--,mp,"op: push left");
+         emitRM("STORE",ac,0,pilha,"op: push left");
+         emitI3("SUBI", pilha, pilha, 1, "Deslocamento pilha");
          /* gen code for ac = right operand */
          cGen(p2);
          /* now load left operand */
-         emitRM("LOAD",ac1,++tmpOffset,mp,"op: load left");
+         emitRM("LOAD",ac1,0,pilha,"op: load left");
+         emitI3("ADDI", pilha, pilha, 1, "Deslocamento pilha");
 
          switch (tree->op) {
             case LT :   //<
@@ -340,6 +365,7 @@ void codeGen(TreeNode * syntaxTree, char * codefile)
    emitComment("Standard prelude:");
    //emitRM("LD",mp,0,ac,"load maxaddress from location 0");
    //emitRM("ST",ac,0,ac,"clear location 0");
+   emitI2("LOADI",pilha,mp,"Inicializa o registrador que controla a memória");
    emitI2("LOADI",baseEscopo,mp+1,"Inicializa o registrador que controla a memória");
    emitI2L("LOADI",31,"_Fim","Inicializa o registrador 31 com o endereço do final do programa");
    emitJL("J","main","Vai para Main");
@@ -349,5 +375,5 @@ void codeGen(TreeNode * syntaxTree, char * codefile)
    /* finish */
    emitLabel("_Fim");
    emitComment("End of execution.");
-   emitRO("HALT",0,0,0,"");
+   emitHalt("");
 }

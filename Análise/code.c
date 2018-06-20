@@ -40,7 +40,7 @@ void emitRO( char *op, int r, int s, int t, char *c)
   * c = a comment to be printed if TraceCode is TRUE
   */
 void emitRM( char * op, int r, int d, int s, char *c)
-{ fprintf(code,"%3d:  %5s  %d,%d(%d) ",emitLoc++,op,r,d,s);
+{ fprintf(code,"%3d:  %5s  %d,%d,%d ",emitLoc++,op,r,d,s);
   if (TraceCode) fprintf(code,"\t\t%s",c) ;
   fprintf(code,"\n") ;
   if (highEmitLoc < emitLoc)  highEmitLoc = emitLoc ;
@@ -110,6 +110,14 @@ void emitLabel(char *label)
   if (highEmitLoc < emitLoc)  highEmitLoc = emitLoc ;
 }
 
+void emitHalt(char *c)
+{
+  fprintf(code,"%3d: HALT ",emitLoc++);
+  if (TraceCode) fprintf(code,"\t\t%s",c) ;
+  fprintf(code,"\n") ;
+  if (highEmitLoc < emitLoc)  highEmitLoc = emitLoc ;
+}
+
 /* Function emitSkip skips "howMany" code
  * locations for later backpatch. It also
  * returns the current code position
@@ -145,7 +153,7 @@ void emitRestore(void)
  * c = a comment to be printed if TraceCode is TRUE
  */
 void emitRM_Abs( char *op, int r, int a, char * c)
-{ fprintf(code,"%3d:  %5s  %d,%d(%d) ",
+{ fprintf(code,"%3d:  %5s  %d,%d,%d ",
                emitLoc,op,r,a-(emitLoc+1),pc);
   ++emitLoc ;
   if (TraceCode) fprintf(code,"\t\t%s",c) ;
