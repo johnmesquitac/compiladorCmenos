@@ -27,8 +27,8 @@ void main(void)
 	output(1, b);
 
 	while(a < 10){
-		x = x + 1;
-		output(2, x);
+		a = a + 1;
+		output(2, a);
 	}
 
 	output(0, 5);

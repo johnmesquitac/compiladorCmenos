@@ -99,10 +99,16 @@ static void insertNode(TreeNode *t) {
                         typeError(t, "It was not declared");
                     else {
 
-                        if((strcmp(st_lookup_typeId(t->attr.name, scopeCurrent), "vector") == 0) || (strcmp(st_lookup_typeId(t->attr.name, ""), "vector") == 0)){
+                        if((strcmp(st_lookup_typeId(t->attr.name, scopeCurrent), "vector") == 0) || (strcmp(st_lookup_typeId(t->attr.name, "global"), "vector") == 0)){
                             t->kind.exp = ParamVectorK;
+                            printf("\nestou aq2\n");
                         }
-                        t->scope = scopeCurrent;
+                        if((strcmp(st_lookup_type(t->attr.name, scopeCurrent), "pointer") == 0) || (strcmp(st_lookup_type(t->attr.name, "global"), "pointer") == 0)){
+                            t->kind.exp = ParamPointerK;
+                            printf("\nestou aq\n");
+                        }
+                        if(st_lookup(t->attr.name, "global") != -1) t->scope = "global";
+                        else t->scope = scopeCurrent;
                         t->typeData = st_lookup_type(t->attr.name, t->scope);
                         st_insert(t->attr.name, t->lineno, 0, t->scope, "variable", "integer", 0);
                     }
@@ -112,7 +118,8 @@ static void insertNode(TreeNode *t) {
                     if (st_lookup(t->attr.name, scopeCurrent) == -1 && st_lookup(t->attr.name, "global") == -1)
                         typeError(t, "It was not declared");
                     else {
-                        t->scope = scopeCurrent;
+                        if(st_lookup(t->attr.name, "global") != -1) t->scope = "global";
+                        else t->scope = scopeCurrent;
                         t->typeData = st_lookup_type(t->attr.name, t->scope);
                         if(strcmp(t->typeData, "pointer")==0) t->kind.exp = PointerK;
                         st_insert(t->attr.name, t->lineno, 0, t->scope, "vector", "integer", 0);
@@ -122,14 +129,14 @@ static void insertNode(TreeNode *t) {
                 case CallK:         
                     t->scope = scopeCurrent;
                     if(strcmp(t->attr.name, "output")==0 || strcmp(t->attr.name, "input")==0){
-                        st_insert(t->attr.name, t->lineno, location++, t->scope, "call", "-", 0);
+                        st_insert(t->attr.name, t->lineno, 0, t->scope, "call", "-", 0);
                     }
                     else if (st_lookup(t->attr.name, "") == -1 && st_lookup(t->attr.name, "global") == -1){
                         typeError(t, "Invalid Call. It was not declared.");
                     }
                     else{
                         t->typeData = st_lookup_type(t->attr.name, "");
-                        st_insert(t->attr.name, t->lineno, location++, t->scope, "call", "-", 0);
+                        st_insert(t->attr.name, t->lineno, 0, t->scope, "call", "-", 0);
                     }
                     break;
 
@@ -226,7 +233,7 @@ static void checkNode(TreeNode *t) {
                     if(t->child[0]->kind.exp == CallK){
                         t->child[0]->typeData = st_lookup_type(t->child[0]->attr.name, "");
                     }
-                    else if (t->child[0]->kind.exp == LiteralK || t->child[0]->kind.exp == IdK || t->child[0]->kind.exp == IdVectorK || t->child[1]->kind.exp == OpK || t->child[1]->kind.exp == RelK || t->child[1]->kind.exp == AtribK)
+                    else if (t->child[0]->kind.exp == LiteralK || t->child[0]->kind.exp == IdK || t->child[0]->kind.exp == IdVectorK || t->child[0]->kind.exp == OpK || t->child[0]->kind.exp == RelK || t->child[0]->kind.exp == AtribK || t->child[0]->kind.exp == PointerK)
                         t->child[0]->typeData = "integer";
                     else{
                         typeError(t, "Invalid Attribution.");
@@ -236,7 +243,7 @@ static void checkNode(TreeNode *t) {
                     if(t->child[1]->kind.exp == CallK){
                         t->child[1]->typeData = st_lookup_type(t->child[1]->attr.name,  "");
                     }
-                    else if (t->child[1]->kind.exp == LiteralK  || t->child[1]->kind.exp == IdK || t->child[1]->kind.exp == IdVectorK || t->child[1]->kind.exp == OpK || t->child[1]->kind.exp == RelK || t->child[1]->kind.exp == AtribK)
+                    else if (t->child[1]->kind.exp == LiteralK  || t->child[1]->kind.exp == IdK || t->child[1]->kind.exp == IdVectorK || t->child[1]->kind.exp == OpK || t->child[1]->kind.exp == RelK || t->child[1]->kind.exp == AtribK || t->child[1]->kind.exp == PointerK)
                         t->child[1]->typeData = "integer";
                     else{
                         typeError(t, "Invalid Attribution.");

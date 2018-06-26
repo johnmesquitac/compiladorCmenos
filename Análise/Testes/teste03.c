@@ -1,12 +1,19 @@
-int multiplica(int a, int b){
-	int x;
+int mult(int a, int b){
+   int x;
 
-	if(a == 1){
+   output(1, a);
+   output(0, b);
+	
+   if(a == 1){
+      output(2, 11);
 		return b;
 	}
 	
-	x = b + multiplica(a-1, b);
-	return x;
+   output(2, 10);
+   x = b + mult(a-1, b);
+   output(2, x);
+	
+   return  x;
 }
 
 
@@ -22,5 +29,5 @@ void main(void)
    output(0, x);
    output(1, y);
 
-   output(2, multiplica(x, y));
+   output(2, mult(x, y));
 }

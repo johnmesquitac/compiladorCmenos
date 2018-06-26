@@ -1,50 +1,50 @@
-/* gdc com erro semantico - nome de vari�vel duplicado com fun��o */
+/* programa para ordena��o por sele��o de 
+   uma matriz com dez elementos. */
 
-/* teste de fun��o com par�metros e corpo sem declara��es */
-int gdc (int u, int v)
-{
-    /* teste de sele��o, express�es, return e chamada de fun��o */
-    if (v == 0) return u; 
-    else return gdc(v,u-u/v*v);
+int vet[ 10 ];
+
+int minloc ( int a[], int low, int high )
+{ int i; int x; int k;
+  k = low;
+  x = a[low];
+  i = low + 1;
+  while (i < high){
+    if (a[i] < x){
+      x = a[i];
+      k = i;
+    }
+    i = i + 1;
+  }
+  return k;
 }
 
-/* teste de fun��o sem par�metros e sem corpo */
-int input(void)
-{
+void sort( int a[], int low, int high)
+{ int i; int k;
+  i = low;
+  while (i < high-1){
+    int t;
+    k = minloc(a,i,high);
+    t = a[k];
+    a[k] = a[i];
+    a[i] = t;
+    i = i + 1;
+  }
 }
 
-/* teste de fun��o com par�metro e sem corpo */
-void denis(int x)
+void main(void)
 {
+  int i;
+  i = 0;
+  while (i < 10){
+    vet[i] = input();
+    i = i + 1;
+  }
+  sort(vet,0,10);
+  i = 0;
+  while (i < 10){
+    output(2, vet[i]);
+    i = i + 1;
+  }
 }
 
-/* teste de fun��o sem par�metro e com corpo completo */
-void main(void) 
-{
-
-   /* teste de diferentes tipos de vari�veis, incluindo vetor */
-   int input; /* erro semantico - nome duplicado com de fun��o */
-   int x;
-   int y;
-   int u;
-   int v[10];
-
-   /* chamadas de fun��es */
-   x = input();
-   y = input();
-   denis(gdc(x,y));
-
-   /* teste atribui��o e repeti��o */
-   u = 0;
-   x = 1;
-   while (x <= 10)
-   {
-      u = u + 1;  
-      v[i] = u;
-      x = x + 1; 
-   }
-
-   /* teste return simples */   
-   return x;
-
-}
+      

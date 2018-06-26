@@ -1,15 +1,144 @@
-  0:  LOADI  29,99 
-  1:  LOADI  30,100 
-  2:  LOADI  31,_Fim 
-  3:      J  main 
-  4:  LABEL  main 
-  5:  LOADI  1,1 
-  6:    OUT  0,1 
-  7:  LOADI  1,2 
-  8:    OUT  1,1 
-  9:  LOADI  1,3 
- 10:    OUT  2,1 
- 11:  STORE  1,0,30 
- 12:     JR  31 
- 13:  LABEL  _Fim 
- 14: HALT 
+  0:  LOADI  28,99 
+  1:  LOADI  30,111 
+  2:  LOADI  29,100 
+  3:  LOADI  0,0 
+  4:  LOADI  31,_Fim 
+  5:      J  main 
+  6:  LABEL  teste 
+  7:   LOAD  1,2,30 
+  8:  STORE  1,0,28 
+  9:   SUBI  28,28,1 
+ 10:   LOAD  1,2,30 
+ 11:  STORE  1,0,28 
+ 12:   SUBI  28,28,1 
+ 13:  LOADI  1,1 
+ 14:   ADDI  28,28,1 
+ 15:   LOAD  2,0,28 
+ 16:    SUB  1,2,1 
+ 17:   ADDI  28,28,1 
+ 18:   LOAD  2,0,28 
+ 19:   LOAD  3,1,30 
+ 20:    ADD  3,1,3 
+ 21:  STORE  2,0,3 
+ 22:   LOAD  1,2,30 
+ 23:  STORE  1,0,28 
+ 24:   SUBI  28,28,1 
+ 25:  LOADI  1,1 
+ 26:   ADDI  28,28,1 
+ 27:   LOAD  2,0,28 
+ 28:    SUB  1,2,1 
+ 29:   LOAD  3,1,30 
+ 30:    ADD  3,1,3 
+ 31:   LOAD  1,0,3 
+ 32:    OUT  0,1 
+ 33:   LOAD  1,2,30 
+ 34:    OUT  1,1 
+ 35:     JR  31 
+ 36:  LABEL  main 
+ 37:  LOADI  1,10 
+ 38:  STORE  1,11,30 
+ 39:  LOADI  1,1 
+ 40:  STORE  1,0,28 
+ 41:   SUBI  28,28,1 
+ 42:   LOAD  1,11,30 
+ 43:  STORE  1,0,28 
+ 44:   SUBI  28,28,1 
+ 45:  LOADI  1,1 
+ 46:   ADDI  28,28,1 
+ 47:   LOAD  2,0,28 
+ 48:    SUB  1,2,1 
+ 49:   ADDI  28,28,1 
+ 50:   LOAD  2,0,28 
+ 51:    ADD  3,1,30 
+ 52:  STORE  2,1,3 
+ 53:   LOAD  1,11,30 
+ 54:  STORE  1,0,28 
+ 55:   SUBI  28,28,1 
+ 56:  LOADI  1,1 
+ 57:   ADDI  28,28,1 
+ 58:   LOAD  2,0,28 
+ 59:    SUB  1,2,1 
+ 60:    ADD  3,1,30 
+ 61:   LOAD  1,1,3 
+ 62:    OUT  2,1 
+ 63:  STORE  31,0,28 
+ 64:   SUBI  28,28,1 
+ 65:   ADDI  1,30,1 
+ 66:   ADDI  30,30,12 
+ 67:  STORE  1,1,30 
+ 68:   SUBI  30,30,12 
+ 69:   LOAD  1,11,30 
+ 70:   ADDI  30,30,12 
+ 71:  STORE  1,2,30 
+ 72:   SUBI  30,30,12 
+ 73:   ADDI  30,30,12 
+ 74:    JAL  teste 
+ 75:   ADDI  28,28,1 
+ 76:   LOAD  31,0,28 
+ 77:   LOAD  1,0,30 
+ 78:   SUBI  30,30,12 
+ 79:   LOAD  1,11,30 
+ 80:  STORE  1,0,28 
+ 81:   SUBI  28,28,1 
+ 82:  LOADI  1,1 
+ 83:   ADDI  28,28,1 
+ 84:   LOAD  2,0,28 
+ 85:    SUB  1,2,1 
+ 86:    ADD  3,1,30 
+ 87:   LOAD  1,1,3 
+ 88:    OUT  2,1 
+ 89:  LOADI  1,2 
+ 90:  STORE  1,0,28 
+ 91:   SUBI  28,28,1 
+ 92:   LOAD  1,11,30 
+ 93:  STORE  1,0,28 
+ 94:   SUBI  28,28,1 
+ 95:  LOADI  1,1 
+ 96:   ADDI  28,28,1 
+ 97:   LOAD  2,0,28 
+ 98:    SUB  1,2,1 
+ 99:   ADDI  28,28,1 
+100:   LOAD  2,0,28 
+101:    ADD  3,1,29 
+102:  STORE  2,0,3 
+103:   LOAD  1,11,30 
+104:  STORE  1,0,28 
+105:   SUBI  28,28,1 
+106:  LOADI  1,1 
+107:   ADDI  28,28,1 
+108:   LOAD  2,0,28 
+109:    SUB  1,2,1 
+110:    ADD  3,1,29 
+111:   LOAD  1,0,3 
+112:    OUT  2,1 
+113:  STORE  31,0,28 
+114:   SUBI  28,28,1 
+115:   ADDI  1,29,0 
+116:   ADDI  30,30,12 
+117:  STORE  1,1,30 
+118:   SUBI  30,30,12 
+119:   LOAD  1,11,30 
+120:   ADDI  30,30,12 
+121:  STORE  1,2,30 
+122:   SUBI  30,30,12 
+123:   ADDI  30,30,12 
+124:    JAL  teste 
+125:   ADDI  28,28,1 
+126:   LOAD  31,0,28 
+127:   LOAD  1,0,30 
+128:   SUBI  30,30,12 
+129:   LOAD  1,11,30 
+130:  STORE  1,0,28 
+131:   SUBI  28,28,1 
+132:  LOADI  1,1 
+133:   ADDI  28,28,1 
+134:   LOAD  2,0,28 
+135:    SUB  1,2,1 
+136:    ADD  3,1,29 
+137:   LOAD  1,0,3 
+138:    OUT  2,1 
+139:  STORE  1,0,30 
+140:     JR  31 
+141:     JR  31 
+142:  LABEL  _Fim 
+143: HALT 

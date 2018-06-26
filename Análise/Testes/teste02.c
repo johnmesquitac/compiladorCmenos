@@ -1,18 +1,16 @@
-int soma(int a, int b){
-   return a + b;
+void funcb(void){
+   output(2, 9);
+}
+
+int func(void){
+   output(1, 7);
+   funcb();
 }
 
 void main(void)
 {
-   int x;
-   int y;
-
-   x = input();
-   y = input();
-
-   output(0, x);
-   output(1, y);
-
-   output(2, soma(x, y));
+   output(0, 5);
+   func();
+   output(0, 2);
 
 }

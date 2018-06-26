@@ -143,12 +143,12 @@ char *st_lookup_typeId(char *name, char *scope) {
 
 
 int st_lookup_tam(char *scope){
-     int i,j=1;
+     int i,j=0;
      for (i = 0; i < SIZE; ++i) {
         if (hashTable[i] != NULL) {
             BucketList l = hashTable[i];
             while (l != NULL) {
-                if(strcmp(scope, l->scope) == 0){ 
+                if(strcmp(scope, l->scope) == 0 && strcmp("call", l->typeId) != 0){ 
                     if(strcmp(l->typeId, "vector") != 0) j++;
                     else j = j + l->tam;
                 }
@@ -156,7 +156,7 @@ int st_lookup_tam(char *scope){
             }
         }
     }
-    return j;
+    return j+1;
 }
 
 /* Procedure printSymTab prints a formatted 
