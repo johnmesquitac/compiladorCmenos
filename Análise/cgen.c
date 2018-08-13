@@ -38,6 +38,7 @@ static void genStmt( TreeNode * tree)
          p2 = tree->child[1] ;
          p3 = tree->child[2] ;
          /* generate code for test expression */
+         nif++;
          cGen(p1);
          bzero(teste, 50);
          sprintf(teste, "_Else%d", nif);
@@ -57,8 +58,8 @@ static void genStmt( TreeNode * tree)
          bzero(teste, 50);
          sprintf(teste, "_Fim_If%d", nif);
          emitLabel(teste);
-         nif++;
-         if (TraceCode)  emitComment("<- if") ;
+
+         if (TraceCode)  emitComment("<- if");
          break; /* if_k */
 
       case WhileK:

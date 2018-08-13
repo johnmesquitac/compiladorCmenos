@@ -165,16 +165,16 @@ int st_lookup_tam(char *scope){
  */
 void printSymTab(FILE *listing) {
     int i;
-    fprintf(listing, "Location  Variable Name  Escopo    Tipo ID    Tipo Dado  Line Numbers\n");
-    fprintf(listing, "--------  -------------  ------  -----------  ---------  ------------\n");
+    fprintf(listing, "Location  Variable Name        Escopo                Tipo ID      Tipo Dado  Line Numbers\n");
+    fprintf(listing, "--------  -------------        ------                -----------  ---------  ------------\n");
     for (i = 0; i < SIZE; ++i) {
         if (hashTable[i] != NULL) {
             BucketList l = hashTable[i];
             while (l != NULL) {
                 LineList t = l->lines;
                 fprintf(listing, "%-9d ", l->memloc);
-                fprintf(listing, "%-14s ", l->name);
-                fprintf(listing, "%-6s  ", l->scope);
+                fprintf(listing, "%-20s ", l->name);
+                fprintf(listing, "%-20s  ", l->scope);
                 fprintf(listing, "%-11s  ", l->typeId);
                 fprintf(listing, "%-7s  ", l->typeData);
                 while (t != NULL) {

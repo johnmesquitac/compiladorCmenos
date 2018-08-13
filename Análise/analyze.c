@@ -101,11 +101,11 @@ static void insertNode(TreeNode *t) {
 
                         if((strcmp(st_lookup_typeId(t->attr.name, scopeCurrent), "vector") == 0) || (strcmp(st_lookup_typeId(t->attr.name, "global"), "vector") == 0)){
                             t->kind.exp = ParamVectorK;
-                            printf("\nestou aq2\n");
+                            //printf("\nestou aq2\n");
                         }
                         if((strcmp(st_lookup_type(t->attr.name, scopeCurrent), "pointer") == 0) || (strcmp(st_lookup_type(t->attr.name, "global"), "pointer") == 0)){
                             t->kind.exp = ParamPointerK;
-                            printf("\nestou aq\n");
+                            //printf("\nestou aq\n");
                         }
                         if(st_lookup(t->attr.name, "global") != -1) t->scope = "global";
                         else t->scope = scopeCurrent;

@@ -20,5 +20,5 @@ bin:
 	gcc Testes/binario.c -o binario
 
 cod:
-	./cminus Testes/teste06.c
-	./binario Testes/teste06.tm > Testes/codigo06.txt
+	./cminus Testes/teste15.c
+	./binario Testes/teste15.tm > Testes/codigo15.txt
