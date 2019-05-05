@@ -128,7 +128,29 @@ static void insertNode(TreeNode *t) {
 
                 case CallK:         
                     t->scope = scopeCurrent;
-                    if(strcmp(t->attr.name, "output")==0 || strcmp(t->attr.name, "input")==0){
+                    if(strcmp(t->attr.name, "output")==0 || 
+                        strcmp(t->attr.name, "input")==0 ||
+                        strcmp(t->attr.name, "nameArq")==0||
+                        strcmp(t->attr.name, "statusArq")==0||
+                        strcmp(t->attr.name, "statusArq")==0||
+                        strcmp(t->attr.name, "get_nprogAtual")==0||
+                        strcmp(t->attr.name, "get_MemProgAtual")==0||
+                        strcmp(t->attr.name, "set_MemProgAtual")==0||
+                        strcmp(t->attr.name, "set_nprogAtual")==0||
+                        strcmp(t->attr.name, "memToReg")==0||
+                        strcmp(t->attr.name, "regToMem")==0||
+                        strcmp(t->attr.name, "set_prog")==0||
+                        strcmp(t->attr.name, "set_SO")==0||
+                        strcmp(t->attr.name, "showReg")==0||
+                        strcmp(t->attr.name, "setNameArq")==0||
+                        strcmp(t->attr.name, "delProg")==0||
+                        strcmp(t->attr.name, "set_progBack")==0||
+                        strcmp(t->attr.name, "setPreempcao")==0||
+                        strcmp(t->attr.name, "readInstruction")==0||
+                        strcmp(t->attr.name, "ativProg")==0||
+                        strcmp(t->attr.name, "copyToMem")==0
+                        )
+                    {
                         st_insert(t->attr.name, t->lineno, 0, t->scope, "call", "-", 0);
                     }
                     else if (st_lookup(t->attr.name, "") == -1 && st_lookup(t->attr.name, "global") == -1){
@@ -211,8 +233,9 @@ static void checkNode(TreeNode *t) {
             switch (t->kind.exp) {
                 case RelK:
                     //fprintf(listing, "RelK:  %s    Tipo1: %s   Tipo2: %s\n\n",t->attr.name, t->child[0]->typeData, t->child[1]->typeData);
-                    if(strcmp(t->child[0]->typeData, "void") == 0 || strcmp(t->child[1]->typeData, "void") ==  0)
-                        typeError(t, "Invalid expression.");
+                    if(t->child[0]->kind.exp != CallK && t->child[1]->kind.exp != CallK )
+                        if(strcmp(t->child[0]->typeData, "void") == 0 || strcmp(t->child[1]->typeData, "void") ==  0)
+                            typeError(t, "Invalid expression.");
                 break;
                 case VectorK:
                 case FunctionK:

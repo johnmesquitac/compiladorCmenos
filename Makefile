@@ -17,8 +17,8 @@ clean:
 	rm -f cminus.tab.*
 
 bin:
-	gcc Testes/binario.c -o binario
+	gcc binario.c -o binario
 
 cod:
-	./cminus Testes/teste15.c
-	./binario Testes/teste15.tm > Testes/codigo15.txt
+	./cminus Testes/teste11.c
+	./binario Testes/teste11.tm > Testes/teste11.txt

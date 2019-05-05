@@ -7,3 +7,12 @@ gcc /Testes/binario.c -o binario
 
 ./cminus Testes/teste01.c
 ./binario Testes/teste01.tm
+
+
+Arquivos Alterar SO/Programa:
+
+cgen.c: variaveis
+
+binario.c: numero programa
+
+makefile: nome

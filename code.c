@@ -110,6 +110,12 @@ void emitLabel(char *label)
   if (highEmitLoc < emitLoc)  highEmitLoc = emitLoc ;
 }
 
+void emitNoop(char *label){
+  fprintf(code,"%3d:  NOOP  %s ",emitLoc++,label);
+  fprintf(code,"\n") ;
+  if (highEmitLoc < emitLoc)  highEmitLoc = emitLoc ;
+}
+
 void emitHalt(char *c)
 {
   fprintf(code,"%3d: HALT ",emitLoc++);

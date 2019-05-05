@@ -8,7 +8,7 @@
 /* mp = "memory pointer" points
  * to top of memory (for temp storage)
  */
-#define  mp 99
+#define  mp 199
 
 
 
@@ -18,11 +18,7 @@
  */
 //#define gp 5
 
-/*Registrador accumulator */
-#define  ac 1
 
-/*Registrador 2nd accumulator */
-#define  ac1 2
 
 /* code emitting utilities */
 
